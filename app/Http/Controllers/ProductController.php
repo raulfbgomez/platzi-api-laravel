@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
+use App\Http\Resources\ProductCollection;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 
 class ProductController extends Controller
 {
+    public function __construc() {
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +20,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        // return ProductResource::collection(Product::all());
+        return new ProductCollection(Product::all());
     }
 
     /**
@@ -23,7 +30,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         $product = Product::create($request->all());
         return $product;
@@ -37,6 +44,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product = new ProductResource($product);
         return $product;
     }
 
@@ -47,7 +55,7 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         $product->update($request->all());
     }
